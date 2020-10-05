@@ -39,3 +39,29 @@ func (u *User) FindByID(ID uint) (*model.User, error) {
 func (u *User) DeleteByID(ID uint) error {
 	return u.udb.DeleteByID(ID)
 }
+
+// UpdateByID update user by id
+func (u *User) UpdateByID(ID uint, password, fullname string) (*model.User, error) {
+	user, err := u.udb.FindByID(ID)
+	if err != nil {
+		return nil, err
+	}
+
+	userData := prepareUpdate(user, password, fullname)
+	return u.udb.UpdateByID(ID, userData)
+}
+
+func prepareUpdate(user *model.User, password, fullname string) model.User {
+	if password != "" {
+		user.Password = password
+	}
+
+	if fullname != "" {
+		user.Fullname = fullname
+	}
+
+	return model.User{
+		Password: user.Password,
+		Fullname: user.Fullname,
+	}
+}

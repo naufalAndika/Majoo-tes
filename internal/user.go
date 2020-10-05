@@ -20,4 +20,5 @@ type UserDB interface {
 	FindByID(ID uint) (*User, error)
 	DeleteByID(ID uint) error
 	CreateUser(User) (*User, error)
+	UpdateByID(ID uint, userData User) (*User, error)
 }

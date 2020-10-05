@@ -54,3 +54,20 @@ func (u *UserDB) DeleteByID(ID uint) error {
 
 	return nil
 }
+
+// UpdateByID update user by id
+func (u *UserDB) UpdateByID(ID uint, userData model.User) (*model.User, error) {
+	var user model.User
+
+	if err := u.cl.First(&user, ID).Error; err != nil {
+		return nil, err
+	}
+
+	user.Password = userData.Password
+	user.Fullname = userData.Fullname
+	if err := u.cl.Save(&user).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
