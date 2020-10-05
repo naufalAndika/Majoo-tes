@@ -25,6 +25,7 @@ func NewUser(svc *service.User, ur *echo.Group) {
 	ur.DELETE("/:id", uc.deleteByID)
 	ur.DELETE("/me", uc.deleteCurrentUser, middleware.UserMiddleware())
 	ur.PUT("/:id", uc.updateByID)
+	ur.PUT("/me", uc.updateCurrentUser, middleware.UserMiddleware())
 }
 
 func (uc *User) createUser(c echo.Context) error {
@@ -116,6 +117,25 @@ func (uc *User) updateByID(c echo.Context) error {
 	}
 
 	user, err := uc.service.UpdateByID(uint(userID), req.Password, req.Fullname)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, user)
+}
+
+func (uc *User) updateCurrentUser(c echo.Context) error {
+	userID, ok := c.Get("user_id").(uint)
+	if !ok {
+		return c.JSON(http.StatusInternalServerError, "Failed to fetch user")
+	}
+
+	req, err := request.ParseUpdateUser(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "Failed to parse request body")
+	}
+
+	user, err := uc.service.UpdateByID(userID, req.Password, req.Fullname)
 	if err != nil {
 		return err
 	}
