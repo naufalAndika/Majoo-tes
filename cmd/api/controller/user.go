@@ -23,6 +23,7 @@ func NewUser(svc *service.User, ur *echo.Group) {
 	ur.GET("/:id", uc.findByID)
 	ur.GET("/me", uc.userDetail, middleware.UserMiddleware())
 	ur.DELETE("/:id", uc.deleteByID)
+	ur.DELETE("/me", uc.deleteCurrentUser, middleware.UserMiddleware())
 	ur.PUT("/:id", uc.updateByID)
 }
 
@@ -84,6 +85,19 @@ func (uc *User) deleteByID(c echo.Context) error {
 	}
 
 	if err := uc.service.DeleteByID(uint(userID)); err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, "User deleted")
+}
+
+func (uc *User) deleteCurrentUser(c echo.Context) error {
+	userID, ok := c.Get("user_id").(uint)
+	if !ok {
+		return c.JSON(http.StatusInternalServerError, "Failed to fetch user")
+	}
+
+	if err := uc.service.DeleteByID(userID); err != nil {
 		return err
 	}
 
