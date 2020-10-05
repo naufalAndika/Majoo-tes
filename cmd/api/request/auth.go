@@ -32,7 +32,7 @@ func ParseLogin(c echo.Context) (*Login, error) {
 func ParseToken(c echo.Context) (*TokenPayload, error) {
 	token := c.Request().Header.Get("Authorization")
 	if token == "" {
-		return nil, c.JSON(http.StatusUnauthorized, "Token not supplied")
+		return nil, echo.NewHTTPError(http.StatusUnauthorized, "Token not supplied")
 	}
 
 	return getTokenPayload(token)
