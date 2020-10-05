@@ -25,3 +25,14 @@ func (u *UserDB) FindAllUsers() (*[]model.User, error) {
 
 	return &users, nil
 }
+
+// FindByID find user by id
+func (u *UserDB) FindByID(ID uint) (*model.User, error) {
+	var user model.User
+
+	if err := u.cl.First(&user, ID).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}

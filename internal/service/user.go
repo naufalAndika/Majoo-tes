@@ -18,3 +18,8 @@ func NewUser(udb model.UserDB) *User {
 func (u *User) FindAllUsers() (*[]model.User, error) {
 	return u.udb.FindAllUsers()
 }
+
+// FindByID find user by id
+func (u *User) FindByID(ID uint) (*model.User, error) {
+	return u.udb.FindByID(ID)
+}

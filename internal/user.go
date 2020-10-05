@@ -17,4 +17,5 @@ type User struct {
 // UserDB interface
 type UserDB interface {
 	FindAllUsers() (*[]User, error)
+	FindByID(ID uint) (*User, error)
 }
