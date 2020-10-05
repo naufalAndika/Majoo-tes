@@ -71,3 +71,13 @@ func (u *UserDB) UpdateByID(ID uint, userData model.User) (*model.User, error) {
 
 	return &user, nil
 }
+
+// FindByCredentials find user by username and password
+func (u *UserDB) FindByCredentials(username, password string) (*model.User, error) {
+	var user model.User
+	if err := u.cl.Where("username = ?", username).Where("password = ?", password).Find(&user).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}

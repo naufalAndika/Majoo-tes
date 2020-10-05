@@ -31,4 +31,9 @@ func addService(db *gorm.DB, e *echo.Echo) {
 	userService := service.NewUser(userDB)
 
 	controller.NewUser(userService, userRouter)
+
+	authRouter := e.Group("/auth")
+	authService := service.NewAuth(userDB)
+
+	controller.NewAuth(authService, authRouter)
 }
