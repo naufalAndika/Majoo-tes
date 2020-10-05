@@ -1,7 +1,10 @@
 package controller
 
 import (
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/labstack/echo"
 	"github.com/naufalAndika/Majoo-tes/cmd/api/middleware"
@@ -26,6 +29,7 @@ func NewUser(svc *service.User, ur *echo.Group) {
 	ur.DELETE("/me", uc.deleteCurrentUser, middleware.UserMiddleware())
 	ur.PUT("/:id", uc.updateByID)
 	ur.PUT("/me", uc.updateCurrentUser, middleware.UserMiddleware())
+	ur.POST("/avatar", uc.storeAvatar, middleware.UserMiddleware())
 }
 
 func (uc *User) createUser(c echo.Context) error {
@@ -136,6 +140,42 @@ func (uc *User) updateCurrentUser(c echo.Context) error {
 	}
 
 	user, err := uc.service.UpdateByID(userID, req.Password, req.Fullname)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, user)
+}
+
+func (uc *User) storeAvatar(c echo.Context) error {
+	userID, ok := c.Get("user_id").(uint)
+	if !ok {
+		return c.JSON(http.StatusInternalServerError, "Failed to fetch user")
+	}
+
+	file, err := c.FormFile("avatar")
+	if err != nil {
+		return err
+	}
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	dst, err := os.Create(file.Filename)
+	if err != nil {
+		return err
+	}
+	defer dst.Close()
+
+	if _, err = io.Copy(dst, src); err != nil {
+		return err
+	}
+
+	filepath, _ := filepath.Abs(file.Filename)
+
+	user, err := uc.service.StoreAvatar(userID, filepath)
 	if err != nil {
 		return err
 	}

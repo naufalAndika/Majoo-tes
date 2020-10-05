@@ -81,3 +81,12 @@ func (u *UserDB) FindByCredentials(username, password string) (*model.User, erro
 
 	return &user, nil
 }
+
+// UpdateAvatar update user avatar
+func (u *UserDB) UpdateAvatar(user *model.User, url string) (*model.User, error) {
+	if err := u.cl.Model(user).Update("avatar", url).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

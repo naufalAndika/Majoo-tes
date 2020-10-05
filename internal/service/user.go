@@ -65,3 +65,13 @@ func prepareUpdate(user *model.User, password, fullname string) model.User {
 		Fullname: user.Fullname,
 	}
 }
+
+// StoreAvatar store user avatar url to database
+func (u *User) StoreAvatar(ID uint, url string) (*model.User, error) {
+	user, err := u.udb.FindByID(ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return u.udb.UpdateAvatar(user, url)
+}
