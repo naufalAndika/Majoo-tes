@@ -1,8 +1,12 @@
 package main
 
 import (
+	"github.com/jinzhu/gorm"
+	"github.com/labstack/echo"
+	"github.com/naufalAndika/Majoo-tes/cmd/api/controller"
 	"github.com/naufalAndika/Majoo-tes/cmd/api/server"
 	"github.com/naufalAndika/Majoo-tes/internal/platform/mysql"
+	"github.com/naufalAndika/Majoo-tes/internal/service"
 )
 
 func main() {
@@ -15,5 +19,16 @@ func main() {
 
 	mysql.Seed(db)
 
+	addService(db, e)
+
 	server.Start(e)
+}
+
+func addService(db *gorm.DB, e *echo.Echo) {
+	userDB := mysql.NewUserDB(db)
+
+	userRouter := e.Group("/users")
+	userService := service.NewUser(userDB)
+
+	controller.NewUser(userService, userRouter)
 }

@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 // User model
 type User struct {
@@ -10,4 +12,9 @@ type User struct {
 	Fullname  string     `gorm:"size:255;not null;" json:"fullname"`
 	CreatedAt *time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"created_at"`
 	UpdatedAt *time.Time `gorm:"default:CURRENT_TIMESTAMP" json:"updated_at"`
+}
+
+// UserDB interface
+type UserDB interface {
+	FindAllUsers() (*[]User, error)
 }
