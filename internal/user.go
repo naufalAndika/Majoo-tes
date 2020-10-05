@@ -18,4 +18,5 @@ type User struct {
 type UserDB interface {
 	FindAllUsers() (*[]User, error)
 	FindByID(ID uint) (*User, error)
+	DeleteByID(ID uint) error
 }

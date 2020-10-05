@@ -36,3 +36,12 @@ func (u *UserDB) FindByID(ID uint) (*model.User, error) {
 
 	return &user, nil
 }
+
+// DeleteByID delete user by id
+func (u *UserDB) DeleteByID(ID uint) error {
+	if err := u.cl.Delete(&model.User{}, ID).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -18,7 +18,8 @@ func NewUser(svc *service.User, ur *echo.Group) {
 	uc := User{svc}
 
 	ur.GET("/", uc.findAllUsers)
-	ur.GET("/:id/", uc.findByID)
+	ur.GET("/:id", uc.findByID)
+	ur.DELETE("/:id", uc.deleteByID)
 }
 
 func (uc *User) findAllUsers(c echo.Context) error {
@@ -42,4 +43,17 @@ func (uc *User) findByID(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, user)
+}
+
+func (uc *User) deleteByID(c echo.Context) error {
+	userID, err := request.ID(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "Failed to fetch ID")
+	}
+
+	if err := uc.service.DeleteByID(uint(userID)); err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, "User deleted")
 }

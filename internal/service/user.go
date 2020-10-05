@@ -23,3 +23,8 @@ func (u *User) FindAllUsers() (*[]model.User, error) {
 func (u *User) FindByID(ID uint) (*model.User, error) {
 	return u.udb.FindByID(ID)
 }
+
+// DeleteByID delete user by id
+func (u *User) DeleteByID(ID uint) error {
+	return u.udb.DeleteByID(ID)
+}
