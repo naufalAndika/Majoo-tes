@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo"
+	"github.com/naufalAndika/Majoo-tes/cmd/api/middleware"
 	"github.com/naufalAndika/Majoo-tes/cmd/api/request"
 	"github.com/naufalAndika/Majoo-tes/internal/service"
 )
@@ -20,6 +21,7 @@ func NewUser(svc *service.User, ur *echo.Group) {
 	ur.POST("/", uc.createUser)
 	ur.GET("/", uc.findAllUsers)
 	ur.GET("/:id", uc.findByID)
+	ur.GET("/me", uc.userDetail, middleware.UserMiddleware())
 	ur.DELETE("/:id", uc.deleteByID)
 	ur.PUT("/:id", uc.updateByID)
 }
@@ -51,6 +53,20 @@ func (uc *User) findByID(c echo.Context) error {
 	userID, err := request.ID(c)
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, "Failed to fetch ID")
+	}
+
+	user, err := uc.service.FindByID(uint(userID))
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, user)
+}
+
+func (uc *User) userDetail(c echo.Context) error {
+	userID, ok := c.Get("user_id").(uint)
+	if !ok {
+		return c.JSON(http.StatusInternalServerError, "Failed to fetch user")
 	}
 
 	user, err := uc.service.FindByID(uint(userID))
