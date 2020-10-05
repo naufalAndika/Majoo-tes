@@ -17,9 +17,24 @@ type User struct {
 func NewUser(svc *service.User, ur *echo.Group) {
 	uc := User{svc}
 
+	ur.POST("/", uc.createUser)
 	ur.GET("/", uc.findAllUsers)
 	ur.GET("/:id", uc.findByID)
 	ur.DELETE("/:id", uc.deleteByID)
+}
+
+func (uc *User) createUser(c echo.Context) error {
+	req, err := request.ParseCreateUser(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, "Failed to parse request body")
+	}
+
+	user, err := uc.service.CreateUser(req.Username, req.Password, req.Fullname)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusCreated, user)
 }
 
 func (uc *User) findAllUsers(c echo.Context) error {

@@ -14,6 +14,17 @@ func NewUser(udb model.UserDB) *User {
 	return &User{udb}
 }
 
+// CreateUser store new user
+func (u *User) CreateUser(username, password, fullname string) (*model.User, error) {
+	user := model.User{
+		Username: username,
+		Password: password,
+		Fullname: fullname,
+	}
+
+	return u.udb.CreateUser(user)
+}
+
 // FindAllUsers in database
 func (u *User) FindAllUsers() (*[]model.User, error) {
 	return u.udb.FindAllUsers()

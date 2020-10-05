@@ -15,6 +15,15 @@ func NewUserDB(c *gorm.DB) *UserDB {
 	return &UserDB{c}
 }
 
+// CreateUser store new user
+func (u *UserDB) CreateUser(user model.User) (*model.User, error) {
+	if err := u.cl.Create(&user).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+
 // FindAllUsers in database
 func (u *UserDB) FindAllUsers() (*[]model.User, error) {
 	users := []model.User{}
